@@ -2,6 +2,7 @@ package com.stt.hashMap;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 public class MyHashMap<K,V> implements Serializable {
 
@@ -39,18 +40,59 @@ public class MyHashMap<K,V> implements Serializable {
 
         @Override
         public K getKey() {
-            return null;
+            return key;
         }
 
         @Override
         public V getValue() {
-            return null;
+            return value;
+        }
+
+        //更新旧值
+        @Override
+        public V setValue(V newValue) {
+            V oldValue = value;
+            value = newValue;
+            return oldValue;
         }
 
         @Override
-        public V setValue(V value) {
-            return null;
+        public int hashCode() {
+            return Objects.hashCode(key) ^ Objects.hashCode(value);
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj == this){
+                return true;
+            }
+            if(obj instanceof Map.Entry){
+                Map.Entry<K,V> entity = (Map.Entry)obj;
+                if(Objects.equals(key,((Map.Entry) obj).getKey()) && Objects.equals(value,((Map.Entry) obj).getValue())){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return this.key + " : "+ this.value;
+        }
+    }
+
+    /**
+     * 确定哈希桶数组索引位置
+     *
+     * @param key
+     * @return
+     */
+    static final int hash(Object key){
+        int h;
+        // 1. h = key.hashCode() 为第一步 取hashCode值
+        // 2. (h >>> 16)  为第二步 高位参与运算
+        // 3. 取模运算
+        return (key == null)? 0 : (h = key.hashCode()) ^ ( h >>> 16);
     }
 
     public static void main(String[] args) {
